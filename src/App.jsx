@@ -50,8 +50,17 @@ function App() {
   function handleSearch(e){
     e.preventDefault(); // Prevents the default form submission behavior (page reload)
     e.target.querySelector("input")?.blur(); // Hide keyboard by blurring input
-    setHasSearched(true);
-    searchImages(1, true); // New search always starts from page 1
+
+    // Scroll to top of page
+    window.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+
+    setTimeout(() => {
+      setHasSearched(true);
+      searchImages(1, true); // New search always starts from page 1
+    }, 100);
   }
 
   // Load more images when "Show More" is clicked
