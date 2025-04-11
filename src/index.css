@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme{
+    --font-display: "Berkshire Swash", serif;
+    --font-base: "Inter", sans-serif;
+
+    --text-2xl: 1.75rem; /* font sizes use - xs, sm, base, xl, 2xl, 4xl, 5xl */
+    
+    --color-primary: #F55951;
+    --color-secondary: #543C52;
+    --color-background: #1F121D;
+    --color-dark: #361D32;
+    --color-light: #F1E8E6;
+    --color-light2: #EDD2CB;
+    --color-white: #FFFFFF;
+}
+
+@layer base {
+    body {
+      background-color: var(--color-background);
+    }
+}
+  
