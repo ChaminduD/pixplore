@@ -49,6 +49,7 @@ function App() {
   // Handles search form submission
   function handleSearch(e){
     e.preventDefault(); // Prevents the default form submission behavior (page reload)
+    e.target.querySelector("input")?.blur(); // Hide keyboard by blurring input
     setHasSearched(true);
     searchImages(1, true); // New search always starts from page 1
   }
