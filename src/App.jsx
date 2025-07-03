@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 import Header from './Components/Header.jsx';
 import Main from './Components/Main.jsx';
@@ -11,6 +11,10 @@ function App() {
   const [keyword, setKeyword] = useState("");            // Search input value
   const [hasSearched, setHasSearched] = useState(false); // Tracks whether a search has been made
   const [isLoading, setIsLoading] = useState(false);     // Indicates if images are currently being fetched
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+
+  const inputRef = useRef();
 
   const accessKey = "ANYm4xj7ypuZiZqDfwHdFhq4WAe1Rctaz78i_dhA87E"; // Unsplash API access key
 
@@ -61,6 +65,17 @@ function App() {
       setHasSearched(true);
       searchImages(1, true); // New search always starts from page 1
     }, 100);
+
+    if (!searchResults.includes(keyword)) {
+      setSearchResults(prev => [keyword, ...prev]);
+    } else {
+      setSearchResults(prev => {
+        const filtered = prev.filter(result => result !== keyword);
+        return [keyword, ...filtered];
+      })
+    }
+
+    setIsOpen(false); // Close dropdown after search
   }
 
   // Load more images when "Show More" is clicked
@@ -75,6 +90,13 @@ function App() {
     setPage(1);
     setKeyword("");
     setHasSearched(false);
+    setIsOpen(false);
+  }
+
+  function toggleDropdown() {
+    setIsOpen(true);
+    setKeyword("");
+    inputRef.current?.focus(); // Focus on input when dropdown opens
   }
 
   return (
@@ -88,6 +110,14 @@ function App() {
           handleSearch={handleSearch}
           hasSearched={hasSearched}
           resetSearch={resetSearch}
+          searchResults={searchResults}
+          setSearchResults={setSearchResults}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          toggleDropdown={toggleDropdown}
+          inputRef={inputRef}
+          searchImages={searchImages}
+          setHasSearched={setHasSearched}
         />
 
         {/* Image gallery and results */}
@@ -100,6 +130,8 @@ function App() {
           hasSearched={hasSearched}
           isLoading={isLoading}
           checkKeyword={keyword}
+          setSearchResults={setSearchResults}
+          searchResults={searchResults}
         />
       </div>
 

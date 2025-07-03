@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import Button from './Button.jsx';
 import Spinner from './Spinner.jsx';
+import { popularKeywords } from '../data/keywords.js';
 
 function Main({
     images,
@@ -10,19 +11,23 @@ function Main({
     setHasSearched,
     hasSearched,
     isLoading,
-    checkKeyword
+    checkKeyword,
+    setSearchResults,
+    searchResults
 }){
-    // Suggested keywords for quick access
-    const keywords = [
-        "Nature", "Technology", "Wildlife", "Architecture", "Fashion",
-        "Travel", "Abstract", "Food", "Art", "Landscape"
-    ];
-
     // Handles clicking on a keyword button
     function handleKeywordSearch(keyword){
         setKeyword(keyword);              // Set the selected keyword
         searchImages(1, true, keyword);   // Trigger image search
         setHasSearched(true);             // Mark that a search has been made
+        if (!searchResults.includes(keyword)) {
+            setSearchResults(prev => [keyword, ...prev]);
+        } else {
+            setSearchResults(prev => {
+                const filtered = prev.filter(result => result !== keyword);
+                return [keyword, ...filtered];
+            })
+        }
     }
 
     return(
@@ -39,7 +44,7 @@ function Main({
                 (<section className="my-12 md:mb-32 px-4 md:px-0 md:w-[560px] md:justify-self-center">
                     <h2 className="text-light2 text-2xl font-display">Popular Searches</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4">
-                        {keywords.map((keyword, index) => (
+                        {popularKeywords.map((keyword, index) => (
                             <button
                                 key={index}
                                 className="bg-linear-150 from-dark via-dark to-secondary hover:via-secondary active:via-light2 text-white font-bold font-base p-4 rounded-2xl shadow-lg cursor-pointer transition duration-300 ease-in-out"

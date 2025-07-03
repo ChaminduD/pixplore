@@ -1,6 +1,40 @@
 import PropTypes from "prop-types";
+import SearchDropdown from "./SearchDropdown.jsx";
+import { useEffect, useRef } from "react";
 
-function Header({ keyword, setKeyword, handleSearch, hasSearched, resetSearch }){
+function Header({
+    keyword,
+    setKeyword,
+    handleSearch,
+    hasSearched,
+    resetSearch,
+    searchResults,
+    setSearchResults,
+    isOpen,
+    setIsOpen,
+    toggleDropdown,
+    inputRef,
+    searchImages,
+    setHasSearched
+}) {
+
+    const wrapperRef = useRef();
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            // Close dropdown if clicked outside the wrapper
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        }
+
+        // Attach event listener to document
+        document.addEventListener('mousedown', handleClickOutside);
+        // Cleanup function to remove the event listener
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+    }, [])
 
     return(
         // Header becomes sticky only after a search is performed
@@ -25,14 +59,41 @@ function Header({ keyword, setKeyword, handleSearch, hasSearched, resetSearch })
                     ${hasSearched ? 'sm:px-0 md:w-full' : ''}`}
                 >
                     {/* Input field for search */}
-                    <input
-                        type="text"
-                        placeholder="Search anything here..."
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        className="text-white placeholder:text-light2 placeholder:opacity-70 font-base text-base bg-dark p-4 rounded-2xl shadow-lg grow focus:outline-none focus:ring-2 focus:ring-secondary"
-                        required
-                    />
+                    <div className="relative w-full" ref={wrapperRef}>
+                        <input
+                            type="text"
+                            ref={inputRef}
+                            placeholder="Search anything here..."
+                            value={keyword}
+                            onFocus={() => setIsOpen(true)}
+                            onChange={(e) => setKeyword(e.target.value)}
+                            className="text-white placeholder:text-light2 placeholder:opacity-70 font-base text-base bg-dark p-4 pr-12 rounded-2xl shadow-lg grow focus:outline-none focus:ring-2 focus:ring-secondary w-full"
+                            required
+                        />
+
+                        <button type="button">
+                            <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            className={`absolute right-0 top-1/2 -translate-y-1/2 rounded-2xl opacity-80 cursor-pointer hover:bg-light/5 hover:opacity-90 active:opacity-100 active:bg-light/10 transition duration-300 ease-in-out
+                            ${hasSearched ? 'block' : 'hidden'}
+                            ${!keyword ? 'hidden' : 'block'}`}
+                            onClick={toggleDropdown}
+                            >
+                                <path d="M16.3 29.7C16.5 29.9 16.7 30 17 30C17.3 30 17.5 29.9 17.7 29.7L23 24.4L28.3 29.7C28.5 29.9 28.8 30 29 30C29.2 30 29.5 29.9 29.7 29.7C30.1 29.3 30.1 28.7 29.7 28.3L24.4 23L29.7 17.7C30.1 17.3 30.1 16.7 29.7 16.3C29.3 15.9 28.7 15.9 28.3 16.3L23 21.6L17.7 16.3C17.3 15.9 16.7 15.9 16.3 16.3C15.9 16.7 15.9 17.3 16.3 17.7L21.6 23L16.3 28.3C15.9 28.7 15.9 29.3 16.3 29.7Z" fill="#F1E8E6"/>
+                            </svg>
+                        </button>
+
+                        <SearchDropdown
+                            searchResults={searchResults}
+                            setSearchResults={setSearchResults}
+                            isOpen={isOpen}
+                            setIsOpen={setIsOpen}
+                            setKeyword={setKeyword}
+                            searchImages={searchImages}
+                            setHasSearched={setHasSearched}
+                        />
+                    </div>
+                    
+
 
                     {/* Submit button with search icon */}
                     <button
